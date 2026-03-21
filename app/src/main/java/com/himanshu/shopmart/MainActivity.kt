@@ -8,14 +8,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.himanshu.shopmart.ui.cart.CartScreen
+import com.himanshu.shopmart.ui.productlist.ProductListScreen
 import com.himanshu.shopmart.ui.theme.ShopMartTheme
 import dagger.hilt.android.AndroidEntryPoint
-
-import com.himanshu.shopmart.ui.productlist.ProductListScreen
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -24,28 +24,25 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ShopMartTheme {
+                val navController = rememberNavController()
+
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Box(modifier = Modifier.padding(innerPadding)) {
-                        ProductListScreen()
+                        NavHost(navController = navController, startDestination = "productList") {
+                            composable("productList") {
+                                ProductListScreen(
+                                    onNavigateToCart = { navController.navigate("cart") }
+                                )
+                            }
+                            composable("cart") {
+                                CartScreen(
+                                    onNavigateBack = { navController.popBackStack() }
+                                )
+                            }
+                        }
                     }
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    ShopMartTheme {
-        Greeting("Android")
     }
 }
