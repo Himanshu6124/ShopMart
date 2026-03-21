@@ -26,26 +26,29 @@ fun ProductListScreen(
                 .fillMaxSize()
                 .padding(padding)
         ) {
-            when (val currentState = state) {
-                is ProductListState.Loading -> {
+
+            when {
+                state.isLoading -> {
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 }
-                is ProductListState.Success -> {
+
+                state.error != null -> {
+                    Text(
+                        text = state.error!!,
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+
+                else -> {
                     LazyColumn(
                         contentPadding = PaddingValues(16.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        items(currentState.products) { product ->
+                        items(state.data) { product ->
                             ProductItem(product)
                         }
                     }
-                }
-                is ProductListState.Error -> {
-                    Text(
-                        text = currentState.message,
-                        color = MaterialTheme.colorScheme.error,
-                        modifier = Modifier.align(Alignment.Center)
-                    )
                 }
             }
         }
