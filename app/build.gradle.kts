@@ -63,6 +63,7 @@ dependencies {
 
     //hilt
     implementation(libs.hilt)
+    implementation(libs.androidx.work.runtime.ktx)
     ksp ("com.google.dagger:hilt-compiler:2.51.1")
 
     //room

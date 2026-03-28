@@ -1,5 +1,6 @@
 package com.himanshu.shopmart.ui.productlist
 
+import android.content.Context
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -14,8 +15,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.work.Constraints
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
+import com.himanshu.shopmart.data.worker.SyncWorker
 import com.himanshu.shopmart.domain.Product
 import com.himanshu.shopmart.ui.cart.CartViewModel
+import java.util.concurrent.TimeUnit
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -117,4 +125,24 @@ fun ProductItem(
             }
         }
     }
+}
+
+fun sync(context: Context){
+
+    val periodicWork = PeriodicWorkRequestBuilder<SyncWorker>(
+        15, TimeUnit.MINUTES
+    ).build()
+
+    WorkManager.getInstance(context)
+        .enqueue(periodicWork)
+
+    val constraints = Constraints.Builder()
+        .setRequiredNetworkType(NetworkType.CONNECTED)
+        .setRequiresCharging(true)
+        .build()
+
+    val workRequest = OneTimeWorkRequestBuilder<SyncWorker>()
+        .setConstraints(constraints)
+        .build()
+
 }
