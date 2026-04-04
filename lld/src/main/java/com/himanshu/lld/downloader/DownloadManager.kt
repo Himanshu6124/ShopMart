@@ -20,6 +20,9 @@ class DownloadManager(
     ) {
         queue.add(request)
     }
+    fun cancel(id: String) {
+        queue.cancel(id)
+    }
 }
 
 fun main() = runBlocking {
@@ -49,5 +52,7 @@ fun main() = runBlocking {
 
     downloadManager.download(request)
 
+    delay(2000)
+    downloadManager.cancel("1")
     delay(5000) // keep JVM alive
 }
